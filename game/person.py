@@ -1,6 +1,6 @@
 
 
-from gobject import Object
+from .gobject import Object
 from enum import Enum
 
 

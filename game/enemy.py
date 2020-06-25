@@ -1,6 +1,6 @@
 
 
-from person import Person
+from .person import Person
 
 
 class Enemy(Person):

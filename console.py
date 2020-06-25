@@ -7,6 +7,10 @@ import os
 from platform import system
 import ctypes
 
+
+system_name = system();
+
+
 #Windows系统移动光标需使用
 class COORD(ctypes.Structure):
 
@@ -17,12 +21,13 @@ class COORD(ctypes.Structure):
         self.Y = y;
 
 
-STD_OUTPUT_HANDLE= -11;
+
+if system_name == "Windows":
+    STD_OUTPUT_HANDLE= -11;
+    handle = ctypes.windll.kernel32.GetStdHandle(STD_OUTPUT_HANDLE);
 
 
 def pause():
-    system_name = system();
-
     if system_name == "Windows":
         os.system("pause");
         return;
@@ -33,8 +38,6 @@ def pause():
 
 
 def clear():
-    system_name = system();
-
     if system_name == "Windows":
         os.system("cls");
         return;
@@ -46,16 +49,14 @@ def clear():
 
 
 def move_cursor(x:int,y:int):
-    system_name = system();
-
     if system_name == "Windows":
-        position = COORD(x,y);
-        handle = ctypes.windll.kernel32.GetStdHandle(STD_OUTPUT_HANDLE);
-        ctypes.windll.kernel32.SetConsoleCursorPosition(handle,position);
-        return;
+        try:
+            position = COORD(int(x),int(y));
+            ctypes.windll.kernel32.SetConsoleCursorPosition(handle,position);
+        except Exception as e:
+            print(e);
     elif system_name == "Linux":
         print("\033[" + y + ";" + x + "H");
-        return;
     elif system_name == "Java":
         return;
 
