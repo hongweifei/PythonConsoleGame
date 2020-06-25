@@ -1,10 +1,15 @@
 
 
-
+import console
 
 from .map import Tile
 from .map import TileType
 from .map import Map
+
+from .player import Player
+import game.person as person
+
+import ctypes
 
 
 tiles = [
@@ -16,17 +21,55 @@ tiles = [
 map1 = Map(tiles);
 
 
+player1 = Player(5,3,"Fly");
+
+
 def game_init():
     map1.write_b("./map1");
     map1.read_b("./map1.map");
-    map1.draw();
     return;
 
 
 
 def game_start():
-    pass;
+    quit = False;
+
+    while quit == False:
+
+        ch = ord(console.getch());
+
+        console.clear();
+        console.move_cursor(10,10);
+        print(ch);
+
+        if ch == 27:                                    # ESC
+            quit = True;
+            pass
+
+
+        if ch == 97:                                    # ord('a');
+            console.move_cursor(10,11);
+            print("player move");
+            player1.walk(person.PersonWay.LEFT,map1);
+            pass
+        elif ch == ord('d'):
+            player1.walk(person.PersonWay.RIGHT,map1);
+            pass
+        elif ch == ord('w'):
+            player1.walk(person.PersonWay.UP,map1);
+            pass
+        elif ch == ord('s'):
+            player1.walk(person.PersonWay.DOWN,map1);
+            pass
+
+        map1.draw();
+        player1.draw();
+
+        pass;
+
+    game_exit();
 
 
 def game_exit():
+    console.clear();
     pass;

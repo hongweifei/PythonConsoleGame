@@ -27,6 +27,7 @@ if system_name == "Windows":
     handle = ctypes.windll.kernel32.GetStdHandle(STD_OUTPUT_HANDLE);
 
 
+
 def pause():
     if system_name == "Windows":
         os.system("pause");
@@ -61,4 +62,11 @@ def move_cursor(x:int,y:int):
         return;
 
 
-
+def getch():
+    if system_name == "Windows":
+        import msvcrt
+        return msvcrt.getch();
+    elif system_name == "Linux":
+        return;
+    elif system_name == "Java":
+        return;
