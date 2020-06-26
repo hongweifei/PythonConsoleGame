@@ -109,10 +109,31 @@ class Tile(Object):
             self.style = "?";
 
         
+        style_list = self.style.split("\n");
+        if style_list[len(style_list) - 1] == "" or style_list[len(style_list) - 1] == " ":
+            self.height = len(style_list) - 1;
+        elif style_list[len(style_list) - 1] != "":
+            self.height = len(style_list);
+            
+        style_list.sort(reverse=True);
+        self.width = len(style_list[0]);
+
+
+        
     def updata(self):
         try:
             self.collision = TileType.get_type_collision(self.type_name);
             self.style = TileType.data[str(self.type_name) + "_style"];
+
+            style_list = self.style.split("\n");
+            if style_list[len(style_list) - 1] == "" or style_list[len(style_list) - 1] == " ":
+                self.height = len(style_list) - 1;
+            elif style_list[len(style_list) - 1] != "":
+                self.height = len(style_list);
+
+            style_list.sort(reverse=True);
+            self.width = len(style_list[0]);
+
         except Exception as e:
             print(e);
         
@@ -170,7 +191,13 @@ class Map:
         for tile in self.tiles:
 
             if tile.collision:
-                if x == int(tile.x) and y == int(tile.y):
+                if x >= int(tile.x) and x < int(tile.x) + int(tile.width) and y >= int(tile.y) and y < int(tile.y) + int(tile.height):
+                    console.move_cache_cursor(0,22);
+                    print(tile);
+                    print("X:" + str(tile.x));
+                    print("Y:" + str(tile.y));
+                    print("Width:" + str(tile.width));
+                    print("Height:" + str(tile.height));
                     return True;
         
         return False;
