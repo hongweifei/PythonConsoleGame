@@ -10,20 +10,37 @@ from .map import Map
 from .map import Tile
 from .map import TileType
 
+from .camera import Camera
+
 class Player(Person):
     'Player Class'
 
-    _style = '@';
+    #_style = '@';
 
-    def __init__(self,x:int,y:int,name:str = ""):
-        self.x = x;
-        self.y = y;
+    def __init__(self,x:int = 0,y:int = 0,name:str = ""):
+        super().__init__(x,y,name);
         self._style = '@';
-        self.name = name;
         return;
 
 
-    def collision(self,map1:Map):
+    def is_collision(self,will_x,will_y,map1:Map):
+
+        if will_x < 0 or will_x > 79:
+            return True;
+        if will_y < 0:
+            return True;
+        
+
+        return map1.is_collision(will_x,will_y);
+
+
+    def is_collision_tile(self,will_x,will_y,map1:Map):
+        return map1.is_collision(will_x,will_y);
+
+    
+    def walk(self,way,map1:Map):
+        self.way = way;
+
         dx = 0;
         dy = 0;
 
@@ -39,32 +56,8 @@ class Player(Person):
         will_x = self.x + dx;
         will_y = self.y + dy;
 
-        if will_x < 0 or will_x > 79:
-            return True;
-        if will_y < 0:
-            return True;
-
-        
-
-        for i in range(len(map1.tiles)):
-            #print(i);
-            #print("will_x:" + str(will_x));
-            #print("tile_x:" + str(map1.tiles[i].x));
-            #print("will_y:" + str(will_y));
-            #print("tile_y:" + str(map1.tiles[i].y) + "\n");
-            if will_x == map1.tiles[i].x and will_y == map1.tiles[i].y:
-                return True;
-                
-        
-        return False;
-
-    
-    def walk(self,way,map1:Map):
-        self.way = way;
-
-
         try:
-            if self.collision(map1):
+            if self.is_collision_tile(will_x,will_y,map1):
                 return;
         except Exception as e:
             print(e);
@@ -89,6 +82,13 @@ class Player(Person):
         print(self._style);
 
 
+
+    def draw_need_camera(self,camera:Camera):
+        will_x = int(self.x) + 39 - camera.look_x;
+        will_y = int(self.y) + 12 - camera.look_y;
+
+        console.move_cursor(will_x,will_y);
+        print(self._style);
 
 
 
