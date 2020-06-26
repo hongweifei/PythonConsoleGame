@@ -38,8 +38,10 @@ def game_clear():
 
 def game_draw_information(ch):
     console.move_cursor(0,0);
-    print("按下的按键：" + str(chr(ch)))
-    print("键值：" + str(ch));
+
+    if ch > 0:
+        print("按下的按键：" + str(chr(ch)))
+        print("键值：" + str(ch));
 
     console.move_cursor(20,0);
     print("玩家名字：" + str(player1.name));
@@ -65,6 +67,7 @@ def game_start():
 
     map1.draw_need_camera(camera);
     player1.draw_need_camera(camera);
+    game_draw_information(0);
 
     while quit == False:
 
