@@ -121,7 +121,7 @@ class Tile(Object):
         will_x = int(self.x) - int(camera.look_x) + 39;
         will_y = int(self.y) - int(camera.look_y) + 12;
 
-        if will_x >= 0 and will_y >= 0 and will_x <= 79:
+        if will_x >= 0 and will_y >= 0 and will_x <= 79 and will_y <= 25:
             console.move_cursor(will_x,will_y);
             print(self.style);
         
