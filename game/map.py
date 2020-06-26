@@ -63,7 +63,7 @@ class TileType():
     def read_data(path:str):
         f = open(path,"r");
 
-        text = f.readlines;
+        text = f.readlines();
         for data in text:
             data_list = data.split(":");
             if data_list[1] == "True" or data_list[1] == "true":
@@ -108,6 +108,15 @@ class Tile(Object):
         else:
             self.style = "?";
 
+        
+    def updata(self):
+        try:
+            self.collision = TileType.get_type_collision(self.type_name);
+            self.style = TileType.data[str(self.type_name) + "_style"];
+        except Exception as e:
+            print(e);
+        
+
 
     def draw(self):
         console.move_cursor(self.x,self.y);
@@ -149,6 +158,11 @@ class Map:
     def __init__(self,tiles = []):
         self.tiles = tiles;
         return;
+
+
+    def updata(self):
+        for tile in self.tiles:
+            tile.updata();
 
     
     def is_collision(self,x,y):
