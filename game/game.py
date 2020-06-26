@@ -37,18 +37,19 @@ def game_clear():
 
 
 def game_draw_information(ch):
-    console.move_cursor(0,0);
-
+    
     if ch > 0:
-        print("按下的按键：" + str(chr(ch)))
-        print("键值：" + str(ch));
+        console.move_cache_cursor(0,0);
+        console.add_str("按下的按键：" + str(chr(ch)))
+        console.move_cache_cursor(0,1);
+        console.add_str("键值：" + str(ch));
 
-    console.move_cursor(20,0);
-    print("玩家名字：" + str(player1.name));
-    console.move_cursor(20,1);
-    print("玩家HP：" + str(player1.hp));
-    console.move_cursor(20,2);
-    print("玩家X：" + str(player1.x) + "      玩家Y：" + str(player1.y));
+    console.move_cache_cursor(20,0);
+    console.add_str("玩家名字：" + str(player1.name));
+    console.move_cache_cursor(20,1);
+    console.add_str("玩家HP：" + str(player1.hp));
+    console.move_cache_cursor(20,2);
+    console.add_str("玩家X：" + str(player1.x) + "      玩家Y：" + str(player1.y));
 
 
 def game_init():
@@ -74,7 +75,7 @@ def game_start():
         ch = ord(console.getch());
 
         # game_clear();
-        console.clear();
+        console.clear_cache();
 
 
         if ch == 27:                                    # ESC
@@ -95,11 +96,11 @@ def game_start():
         camera.look_y = player1.y;
 
 
-        map1.draw_need_camera(camera);
-        player1.draw_need_camera(camera);
+        map1.draw_in_cache_need_camera(camera);
+        player1.draw_in_cache_need_camera(camera);
         game_draw_information(ch);
 
-        
+        console.refresh();
 
         time.sleep(sleep_time);
 

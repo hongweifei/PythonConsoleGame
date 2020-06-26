@@ -109,21 +109,35 @@ class Tile(Object):
             self.style = "?";
 
 
-
-
     def draw(self):
         console.move_cursor(self.x,self.y);
         print(self.style);
-        return;
 
-
+    
     def draw_need_camera(self,camera:Camera):
         will_x = int(self.x) - int(camera.look_x) + 39;
         will_y = int(self.y) - int(camera.look_y) + 12;
 
-        if will_x >= 0 and will_y >= 0 and will_x <= 79 and will_y <= 25:
+        if will_x >= 0 and will_y >= 0 and will_x <= 79 and will_y <= 24:
             console.move_cursor(will_x,will_y);
             print(self.style);
+
+
+    def draw_in_cache(self):
+        #console.move_cursor(self.x,self.y);
+        #print(self.style);
+
+        console.move_cache_cursor(self.x,self.y);
+        console.add_str(self.style);
+
+
+    def draw_in_cache_need_camera(self,camera:Camera):
+        will_x = int(self.x) - int(camera.look_x) + 39;
+        will_y = int(self.y) - int(camera.look_y) + 12;
+
+        if will_x >= 0 and will_y >= 0 and will_x <= 79 and will_y <= 24:
+            console.move_cache_cursor(will_x,will_y);
+            console.add_str(self.style);
         
         return;
 
@@ -181,6 +195,18 @@ class Map:
     def draw_need_camera(self,camera:Camera):
         for tile in self.tiles:
             tile.draw_need_camera(camera);
+        return;
+
+
+    def draw_in_cache(self):
+        for tile in self.tiles:
+            tile.draw_in_cache();
+        return;
+
+
+    def draw_in_cache_need_camera(self,camera:Camera):
+        for tile in self.tiles:
+            tile.draw_in_cache_need_camera(camera);
         return;
 
 
