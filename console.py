@@ -89,7 +89,13 @@ class SMALL_RECT(ctypes.Structure):
 
 class CONSOLE_SCREEN_BUFFER_INFO(ctypes.Structure):
     
-    _fields_ = [("dwSize", COORD),("dwCursorPosition", COORD),("wAttributes", ctypes.c_ushort),("srWindow", SMALL_RECT),("dwMaximumWindowSize",COORD)];
+    _fields_ = [
+        ("dwSize", COORD),
+        ("dwCursorPosition", COORD),
+        ("wAttributes", ctypes.c_ushort),
+        ("srWindow", SMALL_RECT),
+        ("dwMaximumWindowSize",COORD)
+    ];
 
     def __init__(self):
         self.dwSize = COORD();
@@ -116,16 +122,16 @@ if system_name == "Windows":
     import msvcrt
 
     STD_OUTPUT_HANDLE= -11;
-    handle = ctypes.windll.kernel32.GetStdHandle(STD_OUTPUT_HANDLE);# ConsoleHandle为0时修改，1时使用
-    console_cache_handle = ctypes.windll.kernel32.CreateConsoleScreenBuffer(0x80000000|0x40000000,0x00000001|0x00000002,0,1,0);# ConsoleHandle为1时修改，0时使用
+    console_cache_handle1 = ctypes.windll.kernel32.GetStdHandle(STD_OUTPUT_HANDLE);# ConsoleHandle为0时修改，1时使用
+    console_cache_handle2 = ctypes.windll.kernel32.CreateConsoleScreenBuffer(0x80000000|0x40000000,0x00000001|0x00000002,0,1,0);# ConsoleHandle为1时修改，0时使用
     
     console_size = COORD(80,25);
-    ctypes.windll.kernel32.SetConsoleScreenBufferSize(handle,console_size);
-    ctypes.windll.kernel32.SetConsoleScreenBufferSize(console_cache_handle,console_size);
+    ctypes.windll.kernel32.SetConsoleScreenBufferSize(console_cache_handle1,console_size);
+    ctypes.windll.kernel32.SetConsoleScreenBufferSize(console_cache_handle2,console_size);
 
     cursor_info = CONSOLE_CURSOR_INFO(0,False);
-    ctypes.windll.kernel32.SetConsoleCursorInfo(handle,id(cursor_info));
-    ctypes.windll.kernel32.SetConsoleCursorInfo(console_cache_handle,id(cursor_info));
+    ctypes.windll.kernel32.SetConsoleCursorInfo(console_cache_handle1,id(cursor_info));
+    ctypes.windll.kernel32.SetConsoleCursorInfo(console_cache_handle2,id(cursor_info));
     
 elif system_name == "Linux":
     import curses
@@ -154,10 +160,10 @@ def refresh():
     if system_name == "Windows":
         if ConsoleHandle.handle == 0:
             ConsoleHandle.handle = 1;
-            ctypes.windll.kernel32.SetConsoleActiveScreenBuffer(handle);
+            ctypes.windll.kernel32.SetConsoleActiveScreenBuffer(console_cache_handle1);
         elif ConsoleHandle.handle == 1:
             ConsoleHandle.handle = 0;
-            ctypes.windll.kernel32.SetConsoleActiveScreenBuffer(console_cache_handle);
+            ctypes.windll.kernel32.SetConsoleActiveScreenBuffer(console_cache_handle2);
 
     elif system_name == "Linux":
         stdscr.refresh();
@@ -167,7 +173,7 @@ def refresh():
 def move_cursor(x:int,y:int):
     if system_name == "Windows":
         position = COORD(int(x),int(y));
-        ctypes.windll.kernel32.SetConsoleCursorPosition(handle,position);
+        ctypes.windll.kernel32.SetConsoleCursorPosition(console_cache_handle1,position);
     elif system_name == "Linux":
         print("\033[" + y + ";" + x + "H");
     elif system_name == "Java":
@@ -179,9 +185,9 @@ def move_cache_cursor(x:int,y:int):
         position = COORD(int(x),int(y));
         
         if ConsoleHandle.handle == 0:
-            ctypes.windll.kernel32.SetConsoleCursorPosition(handle,position);
+            ctypes.windll.kernel32.SetConsoleCursorPosition(console_cache_handle1,position);
         elif ConsoleHandle.handle == 1:
-            ctypes.windll.kernel32.SetConsoleCursorPosition(console_cache_handle,position);
+            ctypes.windll.kernel32.SetConsoleCursorPosition(console_cache_handle2,position);
 
     elif system_name == "Linux":
         curses.move(y,x);
@@ -192,9 +198,9 @@ def move_cache_cursor(x:int,y:int):
 def add_str(text):
     if system_name == "Windows":
         if ConsoleHandle.handle == 0:
-            ctypes.windll.kernel32.WriteConsoleW(handle, text, len(text), 0, 0);
+            ctypes.windll.kernel32.WriteConsoleW(console_cache_handle1, text, len(text), 0, 0);
         elif ConsoleHandle.handle == 1:
-            ctypes.windll.kernel32.WriteConsoleW(console_cache_handle, text, len(text), 0, 0);
+            ctypes.windll.kernel32.WriteConsoleW(console_cache_handle2, text, len(text), 0, 0);
     elif system_name == "Linux":
         stdscr.addstr(0, 0, text);
 
@@ -215,39 +221,45 @@ def clear():
 def clear_cache():
 
     if system_name == "Windows":
-        #coord = COORD();
-        #chars_written = ctypes.c_void_p();
+        coord = COORD();
+        chars_written = ctypes.c_ulong();
 
-        #info = CONSOLE_SCREEN_BUFFER_INFO();
-        #ctypes.windll.kernel32.GetConsoleScreenBufferInfo(console_cache_handle,info);
+        info = CONSOLE_SCREEN_BUFFER_INFO();
+        #ctypes.windll.kernel32.GetConsoleScreenBufferInfo(console_cache_handle1,info);
         #console_size = info.dwSize.X * info.dwSize.Y;
+        #console_size = 80 * 25;
 
         text = "                                                                            ";
 
-
         try:
-            #ctypes.windll.kernel32.FillConsoleOutputCharacterA(console_cache_handle," ",console_size, coord, chars_written);
-            #ctypes.windll.kernel32.FillConsoleOutputAttribute(handle, info.wAttributes, console_size, coord, chars_written);
+            if ConsoleHandle.handle == 0:
+                ctypes.windll.kernel32.FillConsoleOutputCharacterA(console_cache_handle1,text,25, coord, id(chars_written));
+                ctypes.windll.kernel32.FillConsoleOutputAttribute(console_cache_handle1, info.wAttributes, console_size, coord, id(chars_written));
+            elif ConsoleHandle.handle == 1:
+                ctypes.windll.kernel32.FillConsoleOutputCharacterA(console_cache_handle2,text,25, coord, id(chars_written));
+                ctypes.windll.kernel32.FillConsoleOutputAttribute(console_cache_handle2, info.wAttributes, console_size, coord, id(chars_written));
 
+            """
             i = 0;
 
+            move_cache_cursor(0,0);
             if ConsoleHandle.handle == 0:
-                move_cursor(0,0);
                 while i < 25:
-                    ctypes.windll.kernel32.WriteConsoleW(handle, text, 80, 0, 0);
+                    ctypes.windll.kernel32.WriteConsoleW(console_cache_handle1, text, 80, 0, 0);
                     i += 1;
 
             elif ConsoleHandle.handle == 1:
-                move_cache_cursor(0,0);
                 while i < 25:
-                    ctypes.windll.kernel32.WriteConsoleW(console_cache_handle, text, 80, 0, 0);
+                    ctypes.windll.kernel32.WriteConsoleW(console_cache_handle2, text, 80, 0, 0);
                     i += 1;
+
+            """
             
             
                 
         except Exception as e:
             move_cache_cursor(0,23);
-            ctypes.windll.kernel32.WriteConsoleW(console_cache_handle, str(e), len(str(e)), 0, 0);
+            ctypes.windll.kernel32.WriteConsoleW(console_cache_handle2, str(e), len(str(e)), 0, 0);
 
 
     elif system_name == "Linux":
