@@ -146,8 +146,8 @@ class Tile(Object):
 
     
     def draw_need_camera(self,camera:Camera):
-        will_x = int(self.x) - int(camera.look_x) + console.get_max_width() / 2;
-        will_y = int(self.y) - int(camera.look_y) + console.get_max_height() / 2;
+        will_x = int(self.x) - int(camera.look_x) + int(console.get_max_width() / 2);
+        will_y = int(self.y) - int(camera.look_y) + int(console.get_max_height() / 2);
 
         if will_x >= 0 and will_y >= 0 and will_x < console.get_max_width() and will_y < console.get_max_height() - 1:
             console.move_cursor(int(will_x),int(will_y));
@@ -164,8 +164,8 @@ class Tile(Object):
 
 
     def draw_in_cache_need_camera(self,camera:Camera):
-        will_x = int(self.x) - int(camera.look_x) + console.get_max_width() / 2;
-        will_y = int(self.y) - int(camera.look_y) + console.get_max_height() / 2;
+        will_x = int(self.x) - int(camera.look_x) + int(console.get_max_width() / 2);
+        will_y = int(self.y) - int(camera.look_y) + int(console.get_max_height() / 2);
 
         if will_x >= 0 and will_y >= 0 and will_x < console.get_max_width() and will_y < console.get_max_height() - 1:
             console.move_cache_cursor(int(will_x),int(will_y));
