@@ -14,13 +14,9 @@ from .camera import Camera
 import time
 
 
-tiles = [
-            Tile(0,0),Tile(1,0,"TREE"),Tile(2,0),Tile(3,0),Tile(4,0),Tile(5,0),Tile(6,0),Tile(7,0),Tile(8,0),Tile(9,0),Tile(10,0),
-            Tile(0,1),Tile(0,2),Tile(0,3),Tile(0,4),Tile(0,5),Tile(0,6),
-            Tile(10,1),Tile(10,2),Tile(10,3),Tile(10,4),Tile(10,5),Tile(10,6),
-            Tile(0,7),Tile(1,7),Tile(2,7),Tile(3,7),Tile(4,7),Tile(5,7),
-        ]
-map1 = Map(tiles);
+
+map1 = Map();
+
 
 
 player1 = Player(5,3,"Fly");
@@ -53,15 +49,19 @@ def game_draw_information(ch):
 
 
 def game_init():
-    map1.write("./map1");
-    map1.read("./map1.map");
     
-    TileType.write_data("./data1");
-    TileType.read_data("./data1");
+    map1.create_tiles(0,0,80,1,TileType.WALL);
+    map1.create_tiles(0,25,35,1,TileType.WALL);
+    map1.create_tiles(45,25,35,1,TileType.WALL);
+    map1.create_tiles(0,0,1,26,TileType.WALL);
+    map1.create_tiles(80,0,1,26,TileType.WALL);
+    map1.write("./map1");
 
+    TileType.write_json("./data1.json");
+    TileType.read_json("./data1.json");
+    
+    map1.read("./map1.map");
 
-    #TileType.read_data("./data1");
-    #map1.read("./map1.map");
 
 
 

@@ -5,7 +5,7 @@ import console
 from .gobject import Object
 from .camera import Camera
 
-
+import json
 
 class TileType():
     AIR = "AIR";
@@ -91,8 +91,18 @@ class TileType():
         f.close();
 
 
+    @staticmethod
+    def write_json(path:str):
+        f = open(path,"w",encoding='utf-8');
+        json.dump(TileType.data,f,indent = 4,sort_keys = True);
+        f.close();
 
 
+    @staticmethod
+    def read_json(path:str):
+        f = open(path,"r",encoding='utf-8')
+        TileType.data = json.load(f);
+        f.close();
 
 
 
@@ -201,19 +211,42 @@ class Map:
 
     #tiles = [];
 
-    def __init__(self,tiles = []):
+    def __init__(self,tiles = {}):
         self.tiles = tiles;
         return;
 
 
     def updata(self):
-        for tile in self.tiles:
+        for tile in self.tiles.values():
             tile.updata();
+
+
+    def create(self,width:int,height:int,type_name:str = TileType.FLOOR):
+        
+        i = 0;
+        while i < height:
+            j = 0;
+            while j < width:
+                self.tiles[str(j) + "," + str(i)] = Tile(j,i,type_name);
+                j += 1;
+            i += 1;
+
+
+    def create_tiles(self,x:int,y:int,width:int,height:int,type_name:str = TileType.FLOOR):
+        i = 0;
+        while i < height:
+            j = 0;
+            while j < width:
+                tile_x = x + j;
+                tile_y = y + i;
+                self.tiles[str(tile_x) + "," + str(tile_y)] = Tile(tile_x,tile_y,type_name);
+                j += 1;
+            i += 1;
 
     
     def is_collision(self,x,y):
 
-        for tile in self.tiles:
+        for tile in self.tiles.values():
 
             if tile.collision:
                 if x >= int(tile.x) and x < int(tile.x) + int(tile.width) and y >= int(tile.y) and y < int(tile.y) + int(tile.height):
@@ -237,8 +270,8 @@ class Map:
     def write(self,path:str):
         f = open(path + ".map","w");
         
-        for tile in self.tiles:
-            f.write(str(tile.x) + "," + str(tile.y) + "," + str(tile.type_name) + "\n");
+        for key,tile in self.tiles.items():
+            f.write(str(key) + ":" + str(tile.x) + "," + str(tile.y) + "," + str(tile.type_name) + "\n");
             pass;
 
         f.close();
@@ -247,36 +280,41 @@ class Map:
     def read(self,path:str):
         f = open(path,"r");
 
-        self.tiles = [];
+        self.tiles = {};
 
+        i = 0;
         text = f.readlines();
         for data in text:
-            data_list1 = data.split(",");
-            self.tiles.append(Tile(data_list1[0],data_list1[1],data_list1[2]));
+            data_list1 = data.split(":");
+            data_list2 = data_list1[1].split(",");
+            self.tiles[data_list1[0]] = Tile(data_list2[0],data_list2[1],data_list2[2]);
+            i += 1;
 
         f.close();
 
+    
+
 
     def draw(self):
-        for tile in self.tiles:
+        for tile in self.tiles.values():
             tile.draw();
         return;
 
 
     def draw_need_camera(self,camera:Camera):
-        for tile in self.tiles:
+        for tile in self.tiles.values():
             tile.draw_need_camera(camera);
         return;
 
 
     def draw_in_cache(self):
-        for tile in self.tiles:
+        for tile in self.tiles.values():
             tile.draw_in_cache();
         return;
 
 
     def draw_in_cache_need_camera(self,camera:Camera):
-        for tile in self.tiles:
+        for tile in self.tiles.values():
             tile.draw_in_cache_need_camera(camera);
         return;
 
