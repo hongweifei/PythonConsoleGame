@@ -47,11 +47,7 @@ class TileType():
     @staticmethod
     def add_type(name,style:str,fore_color:int = console.Color.WHITE,back_color:int = console.Color.WHITE,collision:bool = False):
         type_name = name.replace("\n","");
-        type_style = style;
-
-        style_list = style.split("\n");
-        if style_list[len(style_list) - 1] == "" or style_list[len(style_list) - 1] == " ":
-            type_style = style.split("\n")[0];
+        type_style = style.rstrip("\n");
 
         TileType.data[type_name] = collision;
         TileType.data[str(type_name) + "_style"] = str(type_style);
@@ -90,7 +86,7 @@ class TileType():
             elif data_list[1] == "False" or data_list[1] == "false" or data_list[1] == "False\n" or data_list[1] == "false\n":
                 TileType.data[data_list[0]] = False;
             else:
-                TileType.data[data_list[0]] = data_list[1].split("\n")[0];
+                TileType.data[data_list[0]] = data_list[1].rstrip("\n");
 
         f.close();
 
@@ -203,7 +199,7 @@ class Tile(Object):
 
 class Map:
 
-    tiles = [];
+    #tiles = [];
 
     def __init__(self,tiles = []):
         self.tiles = tiles;
