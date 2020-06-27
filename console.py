@@ -149,8 +149,8 @@ elif system_name == "Linux":
 
     stdscr = curses.initscr();
     stdscr.keypad(True);
-    stdscr.curs_set(0);
-
+    
+    curses.curs_set(0);
     curses.noecho();
     curses.cbreak();
 
@@ -257,7 +257,7 @@ def add_str(text):
         elif ConsoleHandle.handle == 1:
             ctypes.windll.kernel32.WriteConsoleW(console_cache_handle2, text, len(text), 0, 0);
     elif system_name == "Linux":
-        if get_cursor_x() >= 0 and get_cursor_x() + len(text) < get_max_width():
+        if int(get_cursor_x()) >= 0 and int(get_cursor_x()) + len(text) < int(get_max_width()):
             stdscr.addstr(text);
 
 
