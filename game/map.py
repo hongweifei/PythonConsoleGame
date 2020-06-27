@@ -158,7 +158,7 @@ class Tile(Object):
         #console.move_cursor(self.x,self.y);
         #print(self.style);
 
-        if slef.x >= 0 and self.y >= 0 and self.x < console.get_width() and self.y < console.get_height() - 1:
+        if self.x >= 0 and self.y >= 0 and self.x < console.get_width() and self.y < console.get_height() - 1:
             console.move_cache_cursor(int(self.x),int(self.y));
             console.add_str(self.style);
 
