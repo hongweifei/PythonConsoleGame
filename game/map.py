@@ -112,7 +112,9 @@ class Tile(Object):
         
         style_list = self.style.split("\n");
         if style_list[len(style_list) - 1] == "" or style_list[len(style_list) - 1] == " ":
+            self.style = style_list[0];
             self.height = len(style_list) - 1;
+            
         elif style_list[len(style_list) - 1] != "":
             self.height = len(style_list);
             
@@ -128,6 +130,7 @@ class Tile(Object):
 
             style_list = self.style.split("\n");
             if style_list[len(style_list) - 1] == "" or style_list[len(style_list) - 1] == " ":
+                self.style = style_list[0];
                 self.height = len(style_list) - 1;
             elif style_list[len(style_list) - 1] != "":
                 self.height = len(style_list);
@@ -196,6 +199,9 @@ class Map:
                 if x >= int(tile.x) and x < int(tile.x) + int(tile.width) and y >= int(tile.y) and y < int(tile.y) + int(tile.height):
                     console.move_cache_cursor(0,22);
                     print(tile);
+                    print("TypeName:" + str(tile.type_name));
+                    print("TypeStyle:" + str(tile.style));
+                    print("TypeCollision:" + str(tile.collision));
                     print("X:" + str(tile.x));
                     print("Y:" + str(tile.y));
                     print("Width:" + str(tile.width));

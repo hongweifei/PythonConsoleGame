@@ -31,7 +31,7 @@ def game_clear():
     console.move_cursor(0,0);
     
     i = 0;
-    while i < 24:
+    while i < console.get_max_height():
         print("                                                                            ");
         i += 1;
 
@@ -58,7 +58,10 @@ def game_init():
     
     TileType.write_data("./data1");
     TileType.read_data("./data1");
-    
+
+
+    #TileType.read_data("./data1");
+    #map1.read("./map1.map");
 
 
 

@@ -1,0 +1,12 @@
+AIR:False
+AIR_style: 
+FLOOR:False
+FLOOR_style: 
+WALL:True
+WALL_style:#
+CLOSE_DOOR:True
+CLOSE_DOOR_style:$
+OPEN_DOOR:False
+OPEN_DOOR_style:S
+TREE:False
+TREE_style:?
