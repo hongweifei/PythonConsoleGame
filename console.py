@@ -187,14 +187,14 @@ def get_cursor_x():
     if system_name == "Windows":
         pass;
     elif system_name == "Linux":
-        stdscr.getyx()[1];
+        return stdscr.getyx()[1];
 
 
 def get_cursor_y():
     if system_name == "Windows":
         pass;
     elif system_name == "Linux":
-        stdscr.getyx()[0];
+        return stdscr.getyx()[0];
 
 
 def pause():

@@ -84,13 +84,13 @@ def game_start():
             quit = True;
 
 
-        if ch == ord('a') or ch == 75 or ch == 0:
+        if ch == ord('a') or ch == 75 or ch == 260:
             player1.walk(PersonWay.LEFT,map1);
-        elif ch == ord('d') or ch == 77 or ch == 0:
+        elif ch == ord('d') or ch == 77 or ch == 261:
             player1.walk(PersonWay.RIGHT,map1);
-        elif ch == ord('w') or ch == 72 or ch == 0:
+        elif ch == ord('w') or ch == 72 or ch == 259:
             player1.walk(PersonWay.UP,map1);
-        elif ch == ord('s') or ch == 80 or ch == 0:
+        elif ch == ord('s') or ch == 80 or ch == 258:
             player1.walk(PersonWay.DOWN,map1);
 
 
