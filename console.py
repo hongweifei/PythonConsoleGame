@@ -144,8 +144,8 @@ if system_name == "Windows":
 elif system_name == "Linux":
     import curses
 
-    console_width = 80;
-    console_height = 25;
+    #console_width = 80;
+    #console_height = 25;
 
     stdscr = curses.initscr();
     stdscr.keypad(True);
@@ -154,7 +154,7 @@ elif system_name == "Linux":
     curses.noecho();
     curses.cbreak();
 
-    stdscr.resize(console_height,console_width);
+    #stdscr.resize(console_height,console_width);
     console_height,console_width = stdscr.getmaxyx();
 
 
