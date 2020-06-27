@@ -271,7 +271,7 @@ class Color():
             if color_name in Color.color_pair:
                 return Color.color_pair[color_name];
             else:
-                curses.init_pair(Color.color_pair_count + 10,color[FORE],color[BACK]);
+                curses.init_pair(Color.color_pair_count + 10,color[Color.FORE],color[Color.BACK]);
                 Color.color_pair[color_name] = curses.color_pair(Color.color_pair_count + 10);
                 Color.color_pair_count += 1;
                 return Color.color_pair[color_name];
