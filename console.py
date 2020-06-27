@@ -148,12 +148,15 @@ elif system_name == "Linux":
     console_height = 25;
 
     stdscr = curses.initscr();
+    stdscr.keypad(True);
+    stdscr.curs_set(0);
+
     curses.noecho();
     curses.cbreak();
-    stdscr.keypad(True)
 
     stdscr.resize(console_height,console_width);
     console_height,console_width = stdscr.getmaxyx();
+
 
 
 def get_width():
@@ -179,6 +182,19 @@ def get_max_height():
         console_height = stdscr.getmaxyx()[0];
     return get_height();
 
+
+def get_cursor_x():
+    if system_name == "Windows":
+        pass;
+    elif system_name == "Linux":
+        stdscr.getyx()[1];
+
+
+def get_cursor_y():
+    if system_name == "Windows":
+        pass;
+    elif system_name == "Linux":
+        stdscr.getyx()[0];
 
 
 def pause():
@@ -228,7 +244,7 @@ def move_cache_cursor(x,y):
             ctypes.windll.kernel32.SetConsoleCursorPosition(console_cache_handle2,position);
 
     elif system_name == "Linux":
-        if x>= 0 and x < get_max_width() and y >= 0 and y < get_max_height():
+        if x >= 0 and x < get_max_width() and y >= 0 and y < get_max_height():
             stdscr.move(y,x);
     elif system_name == "Java":
         return;
@@ -241,7 +257,7 @@ def add_str(text):
         elif ConsoleHandle.handle == 1:
             ctypes.windll.kernel32.WriteConsoleW(console_cache_handle2, text, len(text), 0, 0);
     elif system_name == "Linux":
-        if x>= 0 and x < get_max_width() and y >= 0 and y < get_max_height():
+        if get_cursor_x() >= 0 and get_cursor_x() + len(text) < get_max_width():
             stdscr.addstr(text);
 
 
