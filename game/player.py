@@ -94,16 +94,18 @@ class Player(Person):
         #console.move_cursor(self.x,self.y);
         #print(self._style);
 
-        console.move_cache_cursor(self.x,self.y);
-        console.add_str(self._style);
+        if self.y >= 0:
+            console.move_cache_cursor(self.x,self.y);
+            console.add_str(self._style);
 
 
     def draw_in_cache_need_camera(self,camera:Camera):
         will_x = int(self.x) + 39 - camera.look_x;
         will_y = int(self.y) + 12 - camera.look_y;
 
-        console.move_cache_cursor(will_x,will_y);
-        console.add_str(self._style);
+        if will_y >= 0:
+            console.move_cache_cursor(will_x,will_y);
+            console.add_str(self._style);
 
 
 

@@ -56,6 +56,7 @@ def game_init():
     map1.write("./map1");
     map1.read("./map1.map");
     
+    TileType.write_data("./data1");
     TileType.read_data("./data1");
     
 

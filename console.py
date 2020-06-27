@@ -135,7 +135,6 @@ if system_name == "Windows":
     
 elif system_name == "Linux":
     import curses
-    from curses import wrapper
 
     stdscr = curses.initscr();
     curses.noecho();
@@ -190,7 +189,7 @@ def move_cache_cursor(x:int,y:int):
             ctypes.windll.kernel32.SetConsoleCursorPosition(console_cache_handle2,position);
 
     elif system_name == "Linux":
-        curses.move(y,x);
+        stdscr.move(y,x);
     elif system_name == "Java":
         return;
 
@@ -202,7 +201,7 @@ def add_str(text):
         elif ConsoleHandle.handle == 1:
             ctypes.windll.kernel32.WriteConsoleW(console_cache_handle2, text, len(text), 0, 0);
     elif system_name == "Linux":
-        stdscr.addstr(0, 0, text);
+        stdscr.addstr(text);
 
 
 
@@ -266,10 +265,23 @@ def clear_cache():
         stdscr.clear();
 
 
+def wrapper(func):
+    if system_name == "Linux":
+        curses.wrapper(func);
+
 
 def getch():
     if system_name == "Windows":
         return msvcrt.getch();
+    elif system_name == "Linux":
+        return chr(stdscr.getch());
+    elif system_name == "Java":
+        return;
+
+
+def getch_number():
+    if system_name == "Windows":
+        return ord(msvcrt.getch());
     elif system_name == "Linux":
         return stdscr.getch();
     elif system_name == "Java":

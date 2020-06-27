@@ -157,8 +157,9 @@ class Tile(Object):
         #console.move_cursor(self.x,self.y);
         #print(self.style);
 
-        console.move_cache_cursor(self.x,self.y);
-        console.add_str(self.style);
+        if slef.x >= 0 and self.y >= 0 and self.x <= 79 and self.y <= 24:
+            console.move_cache_cursor(self.x,self.y);
+            console.add_str(self.style);
 
 
     def draw_in_cache_need_camera(self,camera:Camera):
