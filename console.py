@@ -191,17 +191,17 @@ def refresh():
 
 
 
-def move_cursor(x:int,y:int):
+def move_cursor(x,y):
     if system_name == "Windows":
         position = COORD(int(x),int(y));
         ctypes.windll.kernel32.SetConsoleCursorPosition(console_cache_handle1,position);
     elif system_name == "Linux":
-        print("\033[" + str(y) + ";" + str(x) + "H");
+        print("\033[" + str(int(y)) + ";" + str(int(x)) + "H");
     elif system_name == "Java":
         return;
 
 
-def move_cache_cursor(x:int,y:int):
+def move_cache_cursor(x,y):
     if system_name == "Windows":
         position = COORD(int(x),int(y));
         
@@ -212,7 +212,7 @@ def move_cache_cursor(x:int,y:int):
 
     elif system_name == "Linux":
         if x>= 0 and x < console_width and y >= 0 and y < console_height:
-            stdscr.move(y,x);
+            stdscr.move(int(y),int(x));
     elif system_name == "Java":
         return;
 
