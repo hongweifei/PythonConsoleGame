@@ -257,7 +257,11 @@ def add_str(text):
         elif ConsoleHandle.handle == 1:
             ctypes.windll.kernel32.WriteConsoleW(console_cache_handle2, text, len(text), 0, 0);
     elif system_name == "Linux":
-        if int(get_cursor_x()) >= 0 and int(get_cursor_x()) + len(text) < int(get_max_width()):
+        cursor_x = get_cursor_x();
+        cursor_y = get_cursor_y();
+        max_width = get_max_width();
+        max_height = get_max_height();
+        if cursor_x >= 0 and cursor_x + len(text) < max_width and cursor_y >= 0 and cursor_y < max_height:
             stdscr.addstr(text);
 
 
