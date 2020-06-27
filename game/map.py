@@ -140,15 +140,16 @@ class Tile(Object):
 
 
     def draw(self):
-        console.move_cursor(self.x,self.y);
-        print(self.style);
+        if will_x >= 0 and will_y >= 0 and will_x < console.get_width() and will_y < console.get_height() - 1:
+            console.move_cursor(self.x,self.y);
+            print(self.style);
 
     
     def draw_need_camera(self,camera:Camera):
-        will_x = int(self.x) - int(camera.look_x) + 39;
-        will_y = int(self.y) - int(camera.look_y) + 12;
+        will_x = int(self.x) - int(camera.look_x) + console.get_width() / 2;
+        will_y = int(self.y) - int(camera.look_y) + console.get_height() / 2;
 
-        if will_x >= 0 and will_y >= 0 and will_x <= 79 and will_y <= 24:
+        if will_x >= 0 and will_y >= 0 and will_x < console.get_width() and will_y < console.get_height() - 1:
             console.move_cursor(will_x,will_y);
             print(self.style);
 
@@ -157,20 +158,19 @@ class Tile(Object):
         #console.move_cursor(self.x,self.y);
         #print(self.style);
 
-        if slef.x >= 0 and self.y >= 0 and self.x <= 79 and self.y <= 24:
+        if slef.x >= 0 and self.y >= 0 and self.x < console.get_width() and self.y < console.get_height() - 1:
             console.move_cache_cursor(self.x,self.y);
             console.add_str(self.style);
 
 
     def draw_in_cache_need_camera(self,camera:Camera):
-        will_x = int(self.x) - int(camera.look_x) + 39;
-        will_y = int(self.y) - int(camera.look_y) + 12;
+        will_x = int(self.x) - int(camera.look_x) + console.get_width() / 2;
+        will_y = int(self.y) - int(camera.look_y) + console.get_height() / 2;
 
-        if will_x >= 0 and will_y >= 0 and will_x <= 79 and will_y <= 24:
+        if will_x >= 0 and will_y >= 0 and will_x < console.get_width() and will_y < console.get_height() - 1:
             console.move_cache_cursor(will_x,will_y);
             console.add_str(self.style);
         
-        return;
 
 
 class Map:

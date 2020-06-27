@@ -83,8 +83,8 @@ class Player(Person):
 
 
     def draw_need_camera(self,camera:Camera):
-        will_x = int(self.x) + 39 - camera.look_x;
-        will_y = int(self.y) + 12 - camera.look_y;
+        will_x = int(self.x) - int(camera.look_x) + console.get_width() / 2;
+        will_y = int(self.y) - int(camera.look_y) + console.get_height() / 2;
 
         console.move_cursor(will_x,will_y);
         print(self._style);
@@ -94,18 +94,17 @@ class Player(Person):
         #console.move_cursor(self.x,self.y);
         #print(self._style);
 
-        if self.y >= 0:
-            console.move_cache_cursor(self.x,self.y);
-            console.add_str(self._style);
+        console.move_cache_cursor(self.x,self.y);
+        console.add_str(self._style);
 
 
     def draw_in_cache_need_camera(self,camera:Camera):
-        will_x = int(self.x) + 39 - camera.look_x;
-        will_y = int(self.y) + 12 - camera.look_y;
+        will_x = int(self.x) - int(camera.look_x) + console.get_width() / 2;
+        will_y = int(self.y) - int(camera.look_y) + console.get_height() / 2;
 
-        if will_y >= 0:
-            console.move_cache_cursor(will_x,will_y);
-            console.add_str(self._style);
+
+        console.move_cache_cursor(will_x,will_y);
+        console.add_str(self._style);
 
 
 
