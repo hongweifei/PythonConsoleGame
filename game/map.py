@@ -140,8 +140,8 @@ class Tile(Object):
 
 
     def draw(self):
-        if will_x >= 0 and will_y >= 0 and will_x < console.get_width() and will_y < console.get_height() - 1:
-            console.move_cursor(self.x,self.y);
+        if self.x >= 0 and self.y >= 0 and self.x < console.get_width() and self.y < console.get_height() - 1:
+            console.move_cursor(int(self.x),int(self.y));
             print(self.style);
 
     
@@ -150,7 +150,7 @@ class Tile(Object):
         will_y = int(self.y) - int(camera.look_y) + console.get_height() / 2;
 
         if will_x >= 0 and will_y >= 0 and will_x < console.get_width() and will_y < console.get_height() - 1:
-            console.move_cursor(will_x,will_y);
+            console.move_cursor(int(will_x),int(will_y));
             print(self.style);
 
 
@@ -159,7 +159,7 @@ class Tile(Object):
         #print(self.style);
 
         if slef.x >= 0 and self.y >= 0 and self.x < console.get_width() and self.y < console.get_height() - 1:
-            console.move_cache_cursor(self.x,self.y);
+            console.move_cache_cursor(int(self.x),int(self.y));
             console.add_str(self.style);
 
 
@@ -168,7 +168,7 @@ class Tile(Object):
         will_y = int(self.y) - int(camera.look_y) + console.get_height() / 2;
 
         if will_x >= 0 and will_y >= 0 and will_x < console.get_width() and will_y < console.get_height() - 1:
-            console.move_cache_cursor(will_x,will_y);
+            console.move_cache_cursor(int(will_x),int(will_y));
             console.add_str(self.style);
         
 
