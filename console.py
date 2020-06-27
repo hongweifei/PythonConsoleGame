@@ -118,6 +118,7 @@ class ConsoleHandle:
     handle = 0;
 
 
+global console_width,console_height;
 console_width = 0;
 console_height = 0;
 
@@ -164,13 +165,19 @@ def get_height():
 
 
 def get_max_width():
-    console_width = stdscr.getmaxyx()[1];
-    return console_width;
+    if system_name == "Windows":
+        pass;
+    elif system_name == "Linux":
+        console_width = stdscr.getmaxyx()[1];
+    return get_width();
 
 
 def get_max_height():
-    console_height = stdscr.getmaxyx()[0];
-    return console_height;
+    if system_name == "Windows":
+        pass;
+    elif system_name == "Linux":
+        console_height = stdscr.getmaxyx()[0];
+    return get_height();
 
 
 

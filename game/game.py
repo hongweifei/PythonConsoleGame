@@ -42,7 +42,7 @@ def game_draw_information(ch):
         console.move_cache_cursor(0,0);
         console.add_str("按下的按键：" + str(chr(ch)))
         console.move_cache_cursor(0,1);
-        console.add_str("键值：" + str(ch));
+        console.add_str("ASCII码值：" + str(ch));
 
     console.move_cache_cursor(20,0);
     console.add_str("玩家名字：" + str(player1.name));
@@ -84,14 +84,16 @@ def game_start():
             quit = True;
 
 
-        if ch == 97:                                    # ord('a');
+        if ch == ord('a') or ch == 75:
             player1.walk(PersonWay.LEFT,map1);
-        elif ch == ord('d'):
+        elif ch == ord('d') or ch == 77:
             player1.walk(PersonWay.RIGHT,map1);
-        elif ch == ord('w'):
+        elif ch == ord('w') or ch == 72:
             player1.walk(PersonWay.UP,map1);
-        elif ch == ord('s'):
+        elif ch == ord('s') or ch == 80:
             player1.walk(PersonWay.DOWN,map1);
+
+
             
             
         camera.look_x = player1.x;
