@@ -266,7 +266,9 @@ def clear_cache():
 
 
 def wrapper(func):
-    if system_name == "Linux":
+    if system_name == "Windows":
+        func();
+    elif system_name == "Linux":
         curses.wrapper(func);
 
 
