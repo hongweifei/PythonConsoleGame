@@ -9,7 +9,6 @@ import ctypes
 
 
 
-
 """
 ︻︼
 ︽︾
@@ -64,8 +63,8 @@ import ctypes
 ㏷㏸㏹㏺ ㏻ ㏼ ㏽ ㏾ ㍘ ㍙ ㍚ ㍛ ㍜ ㍝ ㍞ ㍟ ㍠ ㍡㍢㍣㍤ ㍥ ㍦ ㍧ ㍨ ㍩ ㍪ ㍫ ㍬ ㍭ ㍮ ㍯㍰㊛㊚
 """
 
-system_name = platform.system();
 
+system_name = platform.system();
 
 
 #Windows系统移动光标需使用

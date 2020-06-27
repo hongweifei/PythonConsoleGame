@@ -49,7 +49,8 @@ def game_draw_information(ch):
 
 
 def game_init():
-    
+
+    map1.create(80,60);   
     map1.create_tiles(0,0,80,1,TileType.WALL);
     map1.create_tiles(0,25,35,1,TileType.WALL);
     map1.create_tiles(45,25,35,1,TileType.WALL);
@@ -106,6 +107,7 @@ def game_start():
         map1.draw_in_cache_need_camera(camera);
         player1.draw_in_cache_need_camera(camera);
         game_draw_information(ch);
+        map1.draw_tile_information(player1.x,player1.y);
 
         console.refresh();
 

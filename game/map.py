@@ -7,6 +7,7 @@ from .camera import Camera
 
 import json
 
+
 class TileType():
     AIR = "AIR";
     FLOOR = "FLOOR";
@@ -134,7 +135,7 @@ class Tile(Object):
         self.updata();
 
 
-        
+    
     def updata(self):
         try:
             #碰撞
@@ -172,7 +173,7 @@ class Tile(Object):
             print(e);
         
 
-
+    
     def draw(self):
         if int(self.x) >= 0 and int(self.y) >= 0 and int(self.x) < console.get_max_width() and int(self.y) < console.get_max_height() - 1:
             console.move_cursor(int(self.x),int(self.y));
@@ -196,7 +197,7 @@ class Tile(Object):
             console.move_cache_cursor(int(self.x),int(self.y));
             console.add_str(self.style,self.forecolor,self.backcolor);
 
-
+    
     def draw_in_cache_need_camera(self,camera:Camera):
         will_x = int(self.x) - int(camera.look_x) + int(console.get_max_width() / 2);
         will_y = int(self.y) - int(camera.look_y) + int(console.get_max_height() / 2);
@@ -204,6 +205,19 @@ class Tile(Object):
         if will_x >= 0 and will_y >= 0 and will_x < console.get_max_width() and will_y < console.get_max_height() - 1:
             console.move_cache_cursor(int(will_x),int(will_y));
             console.add_str(self.style,self.forecolor,self.backcolor);
+
+
+    def draw_information(self):
+        console.move_cache_cursor(0,4);
+        console.add_str("TypeName:" + str(self.type_name) + "\n");
+        console.add_str("TypeCollision:" + str(self.collision) + "\n");
+        console.add_str("TypeStyle:" + str(self.style) + "\n");
+        console.add_str("TypeForegroundColor:" + str(self.forecolor) + "\n");
+        console.add_str("TypeBackgroundColor:" + str(self.backcolor) + "\n");
+        console.add_str("X:" + str(self.x) + "\n");
+        console.add_str("Y:" + str(self.y) + "\n");
+        console.add_str("Width:" + str(self.width) + "\n");
+        console.add_str("Height:" + str(self.height) + "\n");
         
 
 
@@ -213,12 +227,22 @@ class Map:
 
     def __init__(self,tiles = {}):
         self.tiles = tiles;
-        return;
+        self.collision_tile = {};
+
+
+    def updata_collision(self):
+        for key,tile in self.tiles.items():
+            if tile.collision:
+                self.collision_tile[key] = str(tile.width) + "," + str(tile.height);
 
 
     def updata(self):
         for tile in self.tiles.values():
             tile.updata();
+
+        self.updata_collision();
+
+    
 
 
     def create(self,width:int,height:int,type_name:str = TileType.FLOOR):
@@ -232,6 +256,10 @@ class Map:
             i += 1;
 
 
+        if TileType.get_type_collision(type_name):
+            self.updata_collision();
+
+    
     def create_tiles(self,x:int,y:int,width:int,height:int,type_name:str = TileType.FLOOR):
         i = 0;
         while i < height:
@@ -243,9 +271,16 @@ class Map:
                 j += 1;
             i += 1;
 
+
+        if TileType.get_type_collision(type_name):
+            self.updata_collision();
+
+    
+
     
     def is_collision(self,x,y):
 
+        """
         for tile in self.tiles.values():
 
             if tile.collision:
@@ -262,6 +297,20 @@ class Map:
                     print("Width:" + str(tile.width));
                     print("Height:" + str(tile.height));
                     return True;
+        """
+
+
+        for key,value in self.collision_tile.items():
+            test_list1 = key.split(",");
+            test_list2 = value.split(",");
+
+            tile_x = test_list1[0];
+            tile_y = test_list1[1];
+            tile_width = test_list2[0];
+            tile_height = test_list2[1];
+            
+            if x >= int(tile_x) and x < int(tile_x) + int(tile_width) and y >= int(tile_y) and y < int(tile_y) + int(tile_height):
+                return True
         
         return False;
 
@@ -317,6 +366,15 @@ class Map:
         for tile in self.tiles.values():
             tile.draw_in_cache_need_camera(camera);
         return;
+
+
+    def draw_tile_information(self,x,y):
+        tile = self.tiles[str(x) + "," + str(y)];
+        tile.draw_information();
+
+
+
+
 
 
 
