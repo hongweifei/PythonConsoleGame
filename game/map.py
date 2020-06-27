@@ -92,7 +92,8 @@ class Tile(Object):
     #style = '#';
 
     def __init__(self,x:int = 0,y:int = 0,type_name = TileType.WALL):
-        super().__init__(x,y);
+        self.x = x;
+        self.y = y;
 
         self.type_name = type_name.replace("\n","");
         
@@ -140,7 +141,7 @@ class Tile(Object):
 
 
     def draw(self):
-        if self.x >= 0 and self.y >= 0 and self.x < console.get_max_width() and self.y < console.get_max_height() - 1:
+        if int(self.x) >= 0 and int(self.y) >= 0 and int(self.x) < console.get_max_width() and int(self.y) < console.get_max_height() - 1:
             console.move_cursor(int(self.x),int(self.y));
             print(self.style);
 
