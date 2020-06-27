@@ -162,7 +162,17 @@ def get_width():
 def get_height():
     return console_height;
 
-    
+
+def get_max_width():
+    console_width = stdscr.getmaxyx()[1];
+    return console_width;
+
+
+def get_max_height():
+    console_height = stdscr.getmaxyx()[0];
+    return console_height;
+
+
 
 def pause():
     if system_name == "Windows":
@@ -211,8 +221,8 @@ def move_cache_cursor(x,y):
             ctypes.windll.kernel32.SetConsoleCursorPosition(console_cache_handle2,position);
 
     elif system_name == "Linux":
-        if x>= 0 and x < console_width and y >= 0 and y < console_height:
-            stdscr.move(int(y),int(x));
+        if x>= 0 and x < get_max_width() and y >= 0 and y < get_max_height():
+            stdscr.move(y,x);
     elif system_name == "Java":
         return;
 
