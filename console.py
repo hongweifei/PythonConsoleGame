@@ -9,6 +9,7 @@ import ctypes
 
 
 
+
 """
 ︻︼
 ︽︾
@@ -118,9 +119,12 @@ class ConsoleHandle:
     handle = 0;
 
 
+
 global console_width,console_height;
 console_width = 0;
 console_height = 0;
+console_background_color = 0;
+console_foreground_color = 7;
 
 
 if system_name == "Windows":
@@ -140,6 +144,8 @@ if system_name == "Windows":
     cursor_info = CONSOLE_CURSOR_INFO(0,False);
     ctypes.windll.kernel32.SetConsoleCursorInfo(console_cache_handle1,id(cursor_info));
     ctypes.windll.kernel32.SetConsoleCursorInfo(console_cache_handle2,id(cursor_info));
+
+
     
 elif system_name == "Linux":
     import curses
@@ -149,13 +155,127 @@ elif system_name == "Linux":
 
     stdscr = curses.initscr();
     stdscr.keypad(True);
-    
+
+    curses.start_color();#获取颜色curses.color_pair(Color.BLACK.value);
     curses.curs_set(0);
     curses.noecho();
     curses.cbreak();
 
     #stdscr.resize(console_height,console_width);
     console_height,console_width = stdscr.getmaxyx();
+
+
+
+
+class Color():
+    
+    if system_name == "Windows":
+        FORE_BLACK = 0;
+        FORE_RED = 0x0004;
+        FORE_GREEN = 0x0002;
+        FORE_YELLOW = FORE_RED | FORE_GREEN;
+        FORE_BLUE = 0x0001;
+        FORE_MAGENTA = FORE_RED | FORE_BLUE;
+        FORE_CYAN = FORE_GREEN | FORE_BLUE;
+        FORE_WHITE = FORE_RED | FORE_GREEN | FORE_BLUE;
+
+        BACK_BLACK = 0;
+        BACK_RED = 0x0040;
+        BACK_GREEN = 0x0020;
+        BACK_YELLOW = BACK_RED | BACK_GREEN;
+        BACK_BLUE = 0x0010;
+        BACK_MAGENTA = BACK_RED | BACK_BLUE;
+        BACK_CYAN = BACK_GREEN | BACK_BLUE;
+        BACK_WHITE = BACK_RED | BACK_GREEN | BACK_BLUE;
+
+
+    elif system_name == "Linux":
+        color_pair = {};
+        color_pair_count = 0;
+
+
+    FORE = 0;
+    BACK = 1;
+
+    BLACK = 0;
+    RED = 1;
+    GREEN = 2;
+    YELLOW = 3;
+    BLUE = 4;
+    MAGENTA = 5;
+    CYAN = 6;
+    WHITE = 7;
+
+
+
+    @staticmethod
+    def get_color(*color):
+        if system_name == "Windows":
+            fore = Color.FORE_WHITE;
+            back = Color.BACK_BLACK;
+
+            color_length = len(color);
+
+            if color_length == 0:
+                return 0;
+
+            if color[Color.FORE] == Color.BLACK:
+                fore = Color.FORE_BLACK;
+            elif color[Color.FORE] == Color.RED:
+                fore = Color.FORE_RED;
+            elif color[Color.FORE] == Color.GREEN:
+                fore = Color.FORE_GREEN;
+            elif color[Color.FORE] == Color.YELLOW:
+                fore = Color.FORE_YELLOW;
+            elif color[Color.FORE] == Color.BLUE:
+                fore = Color.FORE_BLUE;
+            elif color[Color.FORE] == Color.MAGENTA:
+                fore = Color.FORE_MAGENTA;
+            elif color[Color.FORE] == Color.CYAN:
+                fore = Color.FORE_CYAN;
+            elif color[Color.FORE] == Color.WHITE:
+                fore = Color.FORE_WHITE;
+
+            if color_length < 2:
+                return [fore];
+
+            if color[Color.BACK] == Color.BLACK:
+                back = Color.BACK_BLACK;
+            elif color[Color.BACK] == Color.RED:
+                back = Color.BACK_RED;
+            elif color[Color.BACK] == Color.GREEN:
+                back = Color.BACK_GREEN;
+            elif color[Color.BACK] == Color.YELLOW:
+                back = Color.BACK_YELLOW;
+            elif color[Color.BACK] == Color.BLUE:
+                back = Color.BACK_BLUE;
+            elif color[Color.BACK] == Color.MAGENTA:
+                back = Color.BACK_MAGENTA;
+            elif color[Color.BACK] == Color.CYAN:
+                back = Color.BACK_CYAN;
+            elif color[Color.BACK] == Color.WHITE:
+                back = Color.BACK_WHITE;
+
+            return [fore,back];
+
+        elif system_name == "Linux":
+            
+            color_length = len(color);
+
+            if color_length == 1:
+                return curses.color_pair(color[Color.FORE]);
+            elif color_length == 0:
+                return 0;
+
+            color_name = str(color[Color.FORE]) + str(color[Color.BACK]);
+            if color_name in Color.color_pair:
+                return Color.color_pair[color_name];
+            else:
+                curses.init_pair(Color.color_pair_count + 10,color[FORE],color[BACK]);
+                Color.color_pair[color_name] = curses.color_pair(Color.color_pair_count + 10);
+                Color.color_pair_count += 1;
+                return Color.color_pair[color_name];
+        
 
 
 
@@ -250,21 +370,39 @@ def move_cache_cursor(x,y):
         return;
 
 
-def add_str(text):
+#color第一个为前景色，第二个为背景色。
+def add_str(text,*color):
+
+    color_length = len(color);
+
+    if color_length > 0 and color_length < 2:
+        text_color = Color.get_color(color[Color.FORE]);
+    elif color_length >= 2:
+        text_color = Color.get_color(color[Color.FORE],color[Color.BACK]);
+    elif color_length <= 0:
+        text_color = Color.get_color(Color.WHITE,Color.BLACK);
+
+
     if system_name == "Windows":
         if ConsoleHandle.handle == 0:
+            ctypes.windll.kernel32.SetConsoleTextAttribute(console_cache_handle1,text_color[Color.FORE] | text_color[Color.BACK]);
             ctypes.windll.kernel32.WriteConsoleW(console_cache_handle1, text, len(text), 0, 0);
         elif ConsoleHandle.handle == 1:
+            ctypes.windll.kernel32.SetConsoleTextAttribute(console_cache_handle2,text_color[Color.FORE] | text_color[Color.BACK]);
             ctypes.windll.kernel32.WriteConsoleW(console_cache_handle2, text, len(text), 0, 0);
+            
     elif system_name == "Linux":
         cursor_x = get_cursor_x();
         cursor_y = get_cursor_y();
         max_width = get_max_width();
         max_height = get_max_height();
         if cursor_x >= 0 and cursor_x + len(text) < max_width and cursor_y >= 0 and cursor_y < max_height:
-            stdscr.addstr(text);
+            stdscr.addstr(text,text_color);
 
-
+"""
+def add_str(text):
+    add_str(text,[console_foreground_color,console_background_color]);
+"""
 
 def clear():
     if system_name == "Windows":

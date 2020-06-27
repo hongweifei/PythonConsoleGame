@@ -1,10 +1,10 @@
 
 
 
-
 import console
 from .gobject import Object
 from .camera import Camera
+
 
 
 class TileType():
@@ -22,22 +22,41 @@ class TileType():
     data = {
         "AIR":False,
         "AIR_style":" ",
+        "AIR_forecolor":console.Color.WHITE,
+        "AIR_backcolor":console.Color.BLACK,
         "FLOOR":False,
-        "FLOOR_style":" ",
+        "FLOOR_style":".",
+        "FLOOR_forecolor":console.Color.WHITE,
+        "FLOOR_backcolor":console.Color.BLACK,
         "WALL":True,
         "WALL_style":"#",
+        "WALL_forecolor":console.Color.BLACK,
+        "WALL_backcolor":console.Color.RED,
         "CLOSE_DOOR":True,
         "CLOSE_DOOR_style":"$",
+        "CLOSE_DOOR_forecolor":console.Color.BLACK,
+        "CLOSE_DOOR_backcolor":console.Color.YELLOW,
         "OPEN_DOOR":False,
-        "OPEN_DOOR_style":"S",
+        "OPEN_DOOR_style":"[",
+        "OPEN_DOOR_forecolor":console.Color.YELLOW,
+        "OPEN_DOOR_backcolor":console.Color.BLACK
     };
 
 
 
     @staticmethod
-    def add_type(name,style,collision):
-        TileType.data[name] = collision;
-        TileType.data[str(name) + "_style"] = str(style);
+    def add_type(name,style:str,fore_color:int = console.Color.WHITE,back_color:int = console.Color.WHITE,collision:bool = False):
+        type_name = name.replace("\n","");
+        type_style = style;
+
+        style_list = style.split("\n");
+        if style_list[len(style_list) - 1] == "" or style_list[len(style_list) - 1] == " ":
+            type_style = style.split("\n")[0];
+
+        TileType.data[type_name] = collision;
+        TileType.data[str(type_name) + "_style"] = str(type_style);
+        TileType.data[str(type_name) + "_forecolor"] = fore_color;
+        TileType.data[str(type_name) + "_backcolor"] = back_color;
 
 
     @staticmethod
@@ -66,16 +85,12 @@ class TileType():
         text = f.readlines();
         for data in text:
             data_list = data.split(":");
-            if data_list[1] == "True" or data_list[1] == "true":
+            if data_list[1] == "True" or data_list[1] == "true" or data_list[1] == "True\n" or data_list[1] == "true\n":
                 TileType.data[data_list[0]] = True;
-            elif data_list[1] == "False" or data_list[1] == "false":
-                TileType.data[data_list[0]] = False;
-            elif data_list[1] == "1":
-                TileType.data[data_list[0]] = True;
-            elif data_list[1] == "0":
+            elif data_list[1] == "False" or data_list[1] == "false" or data_list[1] == "False\n" or data_list[1] == "false\n":
                 TileType.data[data_list[0]] = False;
             else:
-                TileType.data[data_list[0]] = data_list[1];
+                TileType.data[data_list[0]] = data_list[1].split("\n")[0];
 
         f.close();
 
@@ -91,7 +106,7 @@ class Tile(Object):
     #type_name = TileType.AIR;
     #style = '#';
 
-    def __init__(self,x:int = 0,y:int = 0,type_name = TileType.WALL):
+    def __init__(self,x:int = 0,y:int = 0,type_name = TileType.FLOOR):
         self.x = x;
         self.y = y;
 
@@ -100,7 +115,7 @@ class Tile(Object):
         if self.type_name in TileType.data:
             self.collision = TileType.get_type_collision(self.type_name);
         else:
-            TileType.add_type(self.type_name,"?",False);
+            TileType.add_type(self.type_name,"?",console.Color.WHITE,False);
             self.collision = TileType.get_type_collision(self.type_name);
 
         type_style_name = str(self.type_name) + "_style";
@@ -110,24 +125,17 @@ class Tile(Object):
             self.style = "?";
 
         
-        style_list = self.style.split("\n");
-        if style_list[len(style_list) - 1] == "" or style_list[len(style_list) - 1] == " ":
-            self.style = style_list[0];
-            self.height = len(style_list) - 1;
-            
-        elif style_list[len(style_list) - 1] != "":
-            self.height = len(style_list);
-            
-        style_list.sort(reverse=True);
-        self.width = len(style_list[0]);
+        self.updata();
 
 
         
     def updata(self):
         try:
+            #碰撞
             self.collision = TileType.get_type_collision(self.type_name);
             self.style = TileType.data[str(self.type_name) + "_style"];
 
+            #宽高，样式
             style_list = self.style.split("\n");
             if style_list[len(style_list) - 1] == "" or style_list[len(style_list) - 1] == " ":
                 self.style = style_list[0];
@@ -137,6 +145,22 @@ class Tile(Object):
 
             style_list.sort(reverse=True);
             self.width = len(style_list[0]);
+
+            #颜色
+            type_forecolor_name = str(self.type_name) + "_forecolor";
+            type_backcolor_name = str(self.type_name) + "_backcolor";
+
+            if type_forecolor_name in TileType.data:
+                self.forecolor = int(TileType.data[type_forecolor_name]);
+            else:
+                self.forecolor = console.Color.WHITE;
+                TileType.data[type_forecolor_name] = self.forecolor;
+            
+            if type_backcolor_name in TileType.data:
+                self.backcolor = int(TileType.data[type_backcolor_name]);
+            else:
+                self.backcolor = console.Color.BLACK;
+                TileType.data[type_backcolor_name] = self.backcolor;
 
         except Exception as e:
             print(e);
@@ -164,7 +188,7 @@ class Tile(Object):
 
         if self.x >= 0 and self.y >= 0 and self.x < console.get_max_width() and self.y < console.get_max_height() - 1:
             console.move_cache_cursor(int(self.x),int(self.y));
-            console.add_str(self.style);
+            console.add_str(self.style,self.forecolor,self.backcolor);
 
 
     def draw_in_cache_need_camera(self,camera:Camera):
@@ -173,7 +197,7 @@ class Tile(Object):
 
         if will_x >= 0 and will_y >= 0 and will_x < console.get_max_width() and will_y < console.get_max_height() - 1:
             console.move_cache_cursor(int(will_x),int(will_y));
-            console.add_str(self.style);
+            console.add_str(self.style,self.forecolor,self.backcolor);
         
 
 
@@ -200,8 +224,10 @@ class Map:
                     console.move_cache_cursor(0,22);
                     print(tile);
                     print("TypeName:" + str(tile.type_name));
-                    print("TypeStyle:" + str(tile.style));
                     print("TypeCollision:" + str(tile.collision));
+                    print("TypeStyle:" + str(tile.style));
+                    print("TypeForegroundColor:" + str(tile.forecolor));
+                    print("TypeBackgroundColor:" + str(tile.backcolor));
                     print("X:" + str(tile.x));
                     print("Y:" + str(tile.y));
                     print("Width:" + str(tile.width));

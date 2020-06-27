@@ -67,7 +67,7 @@ def game_init():
 
 def game_start():
     quit = False;
-    sleep_time = 1/30;
+    sleep_time = 1/60;
 
     map1.updata();
 
