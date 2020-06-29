@@ -300,6 +300,27 @@ class Map:
         """
 
 
+        tile_key = str(x) + "," + str(y);
+
+
+        if tile_key not in self.collision_tile:
+            return False;
+        else:
+            value = self.collision_tile[tile_key];
+
+            test_list1 = tile_key.split(",");
+            test_list2 = value.split(",");
+
+            tile_x = test_list1[0];
+            tile_y = test_list1[1];
+            tile_width = test_list2[0];
+            tile_height = test_list2[1];
+            
+            if x >= int(tile_x) and x < int(tile_x) + int(tile_width) and y >= int(tile_y) and y < int(tile_y) + int(tile_height):
+                return True
+
+
+        """
         for key,value in self.collision_tile.items():
             test_list1 = key.split(",");
             test_list2 = value.split(",");
@@ -311,6 +332,7 @@ class Map:
             
             if x >= int(tile_x) and x < int(tile_x) + int(tile_width) and y >= int(tile_y) and y < int(tile_y) + int(tile_height):
                 return True
+        """
         
         return False;
 
@@ -369,8 +391,11 @@ class Map:
 
 
     def draw_tile_information(self,x,y):
-        tile = self.tiles[str(x) + "," + str(y)];
-        tile.draw_information();
+        key = str(x) + "," + str(y);
+
+        if key in self.tiles:
+            tile = self.tiles[key];
+            tile.draw_information();
 
 
 
