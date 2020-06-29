@@ -4,7 +4,7 @@
 
 
 import os
-import platform
+from platform import system
 import ctypes
 
 
@@ -64,7 +64,7 @@ import ctypes
 """
 
 
-system_name = platform.system();
+system_name = system();
 
 
 class SystemName():
