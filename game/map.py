@@ -209,15 +209,31 @@ class Tile(Object):
 
     def draw_information(self):
         console.move_cache_cursor(0,4);
-        console.add_str("TypeName:" + str(self.type_name) + "\n");
-        console.add_str("TypeCollision:" + str(self.collision) + "\n");
-        console.add_str("TypeStyle:" + str(self.style) + "\n");
-        console.add_str("TypeForegroundColor:" + str(self.forecolor) + "\n");
-        console.add_str("TypeBackgroundColor:" + str(self.backcolor) + "\n");
-        console.add_str("X:" + str(self.x) + "\n");
-        console.add_str("Y:" + str(self.y) + "\n");
-        console.add_str("Width:" + str(self.width) + "\n");
-        console.add_str("Height:" + str(self.height) + "\n");
+        console.add_str("TypeName:" + str(self.type_name));
+
+        console.move_cache_cursor(0,5);
+        console.add_str("TypeCollision:" + str(self.collision));
+
+        console.move_cache_cursor(0,6);
+        console.add_str("TypeStyle:" + str(self.style));
+
+        console.move_cache_cursor(0,7);
+        console.add_str("TypeForegroundColor:" + str(self.forecolor));
+
+        console.move_cache_cursor(0,8);
+        console.add_str("TypeBackgroundColor:" + str(self.backcolor));
+
+        console.move_cache_cursor(0,9);
+        console.add_str("X:" + str(self.x));
+
+        console.move_cache_cursor(0,10);
+        console.add_str("Y:" + str(self.y));
+
+        console.move_cache_cursor(0,11);
+        console.add_str("Width:" + str(self.width));
+
+        console.move_cache_cursor(0,12);
+        console.add_str("Height:" + str(self.height));
         
 
 
