@@ -198,6 +198,7 @@ class Color():
 if system_name == SystemName.windows:
 
     import msvcrt
+    import struct
 
     #Windows系统移动光标需使用
     class COORD(ctypes.Structure):
@@ -207,6 +208,7 @@ if system_name == SystemName.windows:
         def __init__(self,x = 0,y = 0):
             self.X = x;
             self.Y = y;
+
 
     class SMALL_RECT(ctypes.Structure):
 
@@ -246,33 +248,46 @@ if system_name == SystemName.windows:
             self.bVisible = visible;
 
 
+    class ConsoleScreenBuffer:
+        GENERIC_READ = 0x80000000;
+        GENERIC_WRITE = 0x40000000;
+        GENERIC_EXECUTE = 0x20000000;
+        GENERIC_ALL = 0x10000000;
+
+
+        FILE_SHARE_READ = 0x00000001;
+        FILE_SHARE_WRITE = 0x00000002;
+
+
+
     class ConsoleHandle:
         handle = 0;
 
 
 
-    global console_width,console_height;
-    console_width = 0;
-    console_height = 0;
+    console_width = 80;
+    console_height = 25;
     console_background_color = 0;
     console_foreground_color = 7;
 
 
+    kernel32 = ctypes.LibraryLoader(ctypes.WinDLL).kernel32;
 
-    console_width = 80;
-    console_height = 25;
 
     STD_OUTPUT_HANDLE= -11;
-    console_cache_handle1 = ctypes.windll.kernel32.GetStdHandle(STD_OUTPUT_HANDLE);# ConsoleHandle为0时修改，1时使用
-    console_cache_handle2 = ctypes.windll.kernel32.CreateConsoleScreenBuffer(0x80000000|0x40000000,0x00000001|0x00000002,0,1,0);# ConsoleHandle为1时修改，0时使用
+
+    console_cache_handle1 = kernel32.GetStdHandle(STD_OUTPUT_HANDLE);# ConsoleHandle为0时修改，1时使用
+
+    console_cache_handle2 = kernel32.CreateConsoleScreenBuffer(ConsoleScreenBuffer.GENERIC_READ|ConsoleScreenBuffer.GENERIC_WRITE,
+    ConsoleScreenBuffer.FILE_SHARE_READ|ConsoleScreenBuffer.FILE_SHARE_WRITE,0,1,0);# ConsoleHandle为1时修改，0时使用
     
     console_size = COORD(console_width,console_height);
-    ctypes.windll.kernel32.SetConsoleScreenBufferSize(console_cache_handle1,console_size);
-    ctypes.windll.kernel32.SetConsoleScreenBufferSize(console_cache_handle2,console_size);
+    kernel32.SetConsoleScreenBufferSize(console_cache_handle1,console_size);
+    kernel32.SetConsoleScreenBufferSize(console_cache_handle2,console_size);
 
     cursor_info = CONSOLE_CURSOR_INFO(0,False);
-    ctypes.windll.kernel32.SetConsoleCursorInfo(console_cache_handle1,id(cursor_info));
-    ctypes.windll.kernel32.SetConsoleCursorInfo(console_cache_handle2,id(cursor_info));
+    kernel32.SetConsoleCursorInfo(console_cache_handle1,id(cursor_info));
+    kernel32.SetConsoleCursorInfo(console_cache_handle2,id(cursor_info));
 
 
 
@@ -293,11 +308,32 @@ if system_name == SystemName.windows:
 
 
     def get_cursor_x():
-        pass;
+        info = ctypes.create_string_buffer(22);
+
+        if ConsoleHandle.handle == 0:
+            kernel32.GetConsoleScreenBufferInfo(console_cache_handle1,info);
+        elif ConsoleHandle.handle == 1:
+            kernel32.GetConsoleScreenBufferInfo(console_cache_handle2,info);
+        
+        (bufx, bufy, cursor_x, cursor_y, wattr,left, top, right, bottom, maxx, maxy) = struct.unpack("hhhhHhhhhhh", info);
+
+        return cursor_x;
+        
+
 
 
     def get_cursor_y():
-        pass;
+        info = ctypes.create_string_buffer(22);
+
+        if ConsoleHandle.handle == 0:
+            kernel32.GetConsoleScreenBufferInfo(console_cache_handle1,info);
+        elif ConsoleHandle.handle == 1:
+            kernel32.GetConsoleScreenBufferInfo(console_cache_handle2,info);
+        
+        (bufx, bufy, cursor_x, cursor_y, wattr,left, top, right, bottom, maxx, maxy) = struct.unpack("hhhhHhhhhhh", info);
+
+        return cursor_y;
+
 
 
     def pause():
