@@ -387,6 +387,9 @@ if system_name == SystemName.windows:
 elif system_name == SystemName.linux:
     import curses
 
+    stdscr = curses.initscr();
+    stdscr.keypad(True);#功能键
+
     curses.start_color();#获取颜色curses.color_pair(Color.BLACK.value);
     curses.curs_set(0);#隐藏光标
     curses.noecho();#关闭回显
@@ -394,12 +397,14 @@ elif system_name == SystemName.linux:
 
 
 
-    def pause(*stdscr):
+    def pause(*buffer):
         curses.nocbreak();
         
         i = 0;
-        for i in range(len(stdscr)):
-            stdscr[i].keypad(False);
+        for i in range(len(buffer)):
+            buffer[i].keypad(False);
+        
+        stdscr.keypad(False);
 
         curses.echo();
         curses.endwin();
@@ -874,8 +879,8 @@ elif system_name == SystemName.linux:
     #console_width = 80;
     #console_height = 25;
 
-    stdscr = curses.initscr();
-    stdscr.keypad(True);#功能键
+    #stdscr = curses.initscr();
+    #stdscr.keypad(True);#功能键
 
 
     #stdscr.resize(console_height,console_width);
@@ -942,10 +947,9 @@ elif system_name == SystemName.linux:
             text_color = Color.get_color(Color.WHITE,Color.BLACK);
 
 
-        cursor_x = get_cursor_x();
-        cursor_y = get_cursor_y();
-        max_width = get_max_width();
-        max_height = get_max_height();
+        cursor_y, cursor_x = stdscr.getyx();
+        max_height, max_width = stdscr.getmaxyx();
+        
         if cursor_x >= 0 and cursor_x + len(text) < max_width and cursor_y >= 0 and cursor_y < max_height:
             stdscr.addstr(text,text_color);
 
