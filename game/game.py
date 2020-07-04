@@ -35,16 +35,16 @@ def game_clear():
 def game_draw_information(ch):
     
     if ch > 0:
-        console.move_cache_cursor(0,0);
+        console.move_buffer_cursor(0,0);
         console.add_str("按下的按键：" + str(chr(ch)))
-        console.move_cache_cursor(0,1);
+        console.move_buffer_cursor(0,1);
         console.add_str("ASCII码值：" + str(ch));
 
-    console.move_cache_cursor(20,0);
+    console.move_buffer_cursor(20,0);
     console.add_str("玩家名字：" + str(player1.name));
-    console.move_cache_cursor(20,1);
+    console.move_buffer_cursor(20,1);
     console.add_str("玩家HP：" + str(player1.hp));
-    console.move_cache_cursor(20,2);
+    console.move_buffer_cursor(20,2);
     console.add_str("玩家X：" + str(player1.x) + "      玩家Y：" + str(player1.y));
 
 
@@ -81,7 +81,7 @@ def game_start():
         ch = ord(console.getch());
 
         # game_clear();
-        console.clear_cache();
+        console.clear_buffer();
 
 
         if ch == 27:                                    # ESC
@@ -104,8 +104,8 @@ def game_start():
         camera.look_y = player1.y;
 
 
-        map1.draw_in_cache_need_camera(camera);
-        player1.draw_in_cache_need_camera(camera);
+        map1.draw_in_buffer_need_camera(camera);
+        player1.draw_in_buffer_need_camera(camera);
         game_draw_information(ch);
         map1.draw_tile_information(player1.x,player1.y);
 

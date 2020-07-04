@@ -90,20 +90,20 @@ class Player(Person):
         print(self._style);
 
 
-    def draw_in_cache(self):
+    def draw_in_buffer(self):
         #console.move_cursor(self.x,self.y);
         #print(self._style);
 
-        console.move_cache_cursor(int(self.x),int(self.y));
+        console.move_buffer_cursor(int(self.x),int(self.y));
         console.add_str(self._style);
 
 
-    def draw_in_cache_need_camera(self,camera:Camera):
+    def draw_in_buffer_need_camera(self,camera:Camera):
         will_x = int(self.x) - int(camera.look_x) + int(console.get_max_width() / 2);
         will_y = int(self.y) - int(camera.look_y) + int(console.get_max_height() / 2);
 
 
-        console.move_cache_cursor(int(will_x),int(will_y));
+        console.move_buffer_cursor(int(will_x),int(will_y));
         console.add_str(self._style);
 
 

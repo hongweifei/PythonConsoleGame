@@ -189,50 +189,50 @@ class Tile(Object):
             print(self.style);
 
 
-    def draw_in_cache(self):
+    def draw_in_buffer(self):
         #console.move_cursor(self.x,self.y);
         #print(self.style);
 
         if self.x >= 0 and self.y >= 0 and self.x < console.get_max_width() and self.y < console.get_max_height() - 1:
-            console.move_cache_cursor(int(self.x),int(self.y));
+            console.move_buffer_cursor(int(self.x),int(self.y));
             console.add_str(self.style,self.forecolor,self.backcolor);
 
     
-    def draw_in_cache_need_camera(self,camera:Camera):
+    def draw_in_buffer_need_camera(self,camera:Camera):
         will_x = int(self.x) - int(camera.look_x) + int(console.get_max_width() / 2);
         will_y = int(self.y) - int(camera.look_y) + int(console.get_max_height() / 2);
 
         if will_x >= 0 and will_y >= 0 and will_x < console.get_max_width() and will_y < console.get_max_height() - 1:
-            console.move_cache_cursor(int(will_x),int(will_y));
+            console.move_buffer_cursor(int(will_x),int(will_y));
             console.add_str(self.style,self.forecolor,self.backcolor);
 
 
     def draw_information(self):
-        console.move_cache_cursor(0,4);
+        console.move_buffer_cursor(0,4);
         console.add_str("TypeName:" + str(self.type_name));
 
-        console.move_cache_cursor(0,5);
+        console.move_buffer_cursor(0,5);
         console.add_str("TypeCollision:" + str(self.collision));
 
-        console.move_cache_cursor(0,6);
+        console.move_buffer_cursor(0,6);
         console.add_str("TypeStyle:" + str(self.style));
 
-        console.move_cache_cursor(0,7);
+        console.move_buffer_cursor(0,7);
         console.add_str("TypeForegroundColor:" + str(self.forecolor));
 
-        console.move_cache_cursor(0,8);
+        console.move_buffer_cursor(0,8);
         console.add_str("TypeBackgroundColor:" + str(self.backcolor));
 
-        console.move_cache_cursor(0,9);
+        console.move_buffer_cursor(0,9);
         console.add_str("X:" + str(self.x));
 
-        console.move_cache_cursor(0,10);
+        console.move_buffer_cursor(0,10);
         console.add_str("Y:" + str(self.y));
 
-        console.move_cache_cursor(0,11);
+        console.move_buffer_cursor(0,11);
         console.add_str("Width:" + str(self.width));
 
-        console.move_cache_cursor(0,12);
+        console.move_buffer_cursor(0,12);
         console.add_str("Height:" + str(self.height));
         
 
@@ -301,7 +301,7 @@ class Map:
 
             if tile.collision:
                 if x >= int(tile.x) and x < int(tile.x) + int(tile.width) and y >= int(tile.y) and y < int(tile.y) + int(tile.height):
-                    console.move_cache_cursor(0,22);
+                    console.move_buffer_cursor(0,22);
                     print(tile);
                     print("TypeName:" + str(tile.type_name));
                     print("TypeCollision:" + str(tile.collision));
@@ -394,15 +394,15 @@ class Map:
         return;
 
 
-    def draw_in_cache(self):
+    def draw_in_buffer(self):
         for tile in self.tiles.values():
-            tile.draw_in_cache();
+            tile.draw_in_buffer();
         return;
 
 
-    def draw_in_cache_need_camera(self,camera:Camera):
+    def draw_in_buffer_need_camera(self,camera:Camera):
         for tile in self.tiles.values():
-            tile.draw_in_cache_need_camera(camera);
+            tile.draw_in_buffer_need_camera(camera);
         return;
 
 
