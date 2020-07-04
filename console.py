@@ -362,6 +362,13 @@ if system_name == SystemName.windows:
 
         ctypes.windll.kernel32.SetConsoleTextAttribute(console_buffer,text_color[Color.FORE] | text_color[Color.BACK]);
         ctypes.windll.kernel32.WriteConsoleW(console_buffer, text, len(text), 0, 0);
+    
+
+
+    def add_str_to_buffer(console_buffer,text:str,x:int,y:int):
+        position = COORD(x,y);
+        kernel32.SetConsoleCursorPosition(console_buffer,position);
+        kernel32.WriteConsoleW(console_buffer, text, len(text), 0, 0);
 
 
     def clear_buffer(console_buffer):
@@ -380,8 +387,87 @@ if system_name == SystemName.windows:
 elif system_name == SystemName.linux:
     import curses
 
+    curses.start_color();#获取颜色curses.color_pair(Color.BLACK.value);
+    curses.curs_set(0);#隐藏光标
+    curses.noecho();#关闭回显
+    curses.cbreak();#
+
+
+
+    def pause(*stdscr):
+        curses.nocbreak();
+        
+        i = 0;
+        for i in range(len(stdscr)):
+            stdscr[i].keypad(False);
+
+        curses.echo();
+        curses.endwin();
+
 
     
+    def get_buffer_cursor_x(console_buffer):
+        return console_buffer.getyx()[1];
+
+
+    def get_buffer_cursor_y(console_buffer):
+        return console_buffer.getyx()[0];
+
+    
+
+    def get_buffer_width(console_buffer):
+        return console_buffer.getmaxyx()[1];
+
+
+    def get_buffer_height(console_buffer):
+        return console_buffer.getmaxyx()[0];
+
+
+
+    def get_buffer_max_width(console_buffer):
+        return console_buffer.getmaxyx()[1];
+
+
+    def get_buffer_max_height(console_buffer):
+        return console_buffer.getmaxyx()[0];
+
+
+
+    def set_buffer_size(console_buffer,width,height):
+        console_buffer.resize(height,width);
+    
+
+    def MoveBufferCursor(console_buffer,x:int,y:int):
+        max_height, max_width = console_buffer.getmaxyx();
+
+        if x >= 0 and x < max_width and y >= 0 and y < max_height:
+            console_buffer.move(y,x);
+
+    
+    def add_str_to_buffer(console_buffer,text:str,*color:int):
+        color_length = len(color);
+
+        if color_length > 0 and color_length < 2:
+            text_color = Color.get_color(color[Color.FORE]);
+        elif color_length >= 2:
+            text_color = Color.get_color(color[Color.FORE],color[Color.BACK]);
+        elif color_length <= 0:
+            text_color = Color.get_color(Color.WHITE,Color.BLACK);
+
+
+        cursor_y, cursor_x = console_buffer.getyx();
+        max_height, max_width = console_buffer.getmaxyx();
+
+        if cursor_x >= 0 and cursor_x + len(text) < max_width and cursor_y >= 0 and cursor_y < max_height:
+            console_buffer.addstr(text,text_color);
+    
+
+    def add_str_to_buffer(console_buffer,text:str,x:int,y:int):
+        cursor_y, cursor_x = console_buffer.getyx();
+        max_height, max_width = console_buffer.getmaxyx();
+
+        if cursor_x >= 0 and cursor_x + len(text) < max_width and cursor_y >= 0 and cursor_y < max_height:
+            console_buffer.addstr(y,x,text);
 
 
 
@@ -458,6 +544,7 @@ class ConsoleCacheBuffer:
             self.curosr_y = y;
 
 
+
         def clear(self):
             coord = COORD(0,0);
             chars_written = ctypes.c_ulong();
@@ -466,6 +553,15 @@ class ConsoleCacheBuffer:
             ctypes.windll.kernel32.FillConsoleOutputAttribute(self.buffer, 0, console_size, coord, id(chars_written));
             self.updata();
 
+        
+
+        def getch(self):
+            return msvcrt.getch();
+        
+
+        def getch_number(self):
+            return ord(msvcrt.getch());
+
 
 
 
@@ -473,10 +569,76 @@ class ConsoleCacheBuffer:
         
 
 
-        def __init__(self,width = 80,height = 25):
+        def __init__(self,width = 80,height = 25,*buffer):
             super().__init__();
 
-            self.buffer = curses.newwin(height,width);
+            buffer_length = len(buffer);
+
+            if buffer_length == 0:
+                self.buffer = curses.newwin(height,width);
+            elif buffer_length > 0:
+                self.buffer = buffer;
+
+
+            self.height, self.width = self.buffer.getmaxyx();
+            self.cursor_y, self.cursor_x = self.buffer.getyx();
+
+            self.buffer.keypad(True);#功能键
+
+        
+        def updata(self):
+            self.height, self.width = self.buffer.getmaxyx();
+            self.cursor_y, self.cursor_x = self.buffer.getyx();
+
+        
+        def refresh(self):
+            self.buffer.refresh();
+
+
+        def set_cursor_info(self,visible):
+            curses.curs_set(visible);#隐藏光标
+
+
+        def set_size(self,width,height):
+            self.buffer.resize(height,width);
+            self.width = width;
+            self.height = height;
+
+        
+        def set_cursor_position(self,x:int,y:int):
+            self.buffer.move(y,x);
+            self.curosr_x = x;
+            self.curosr_y = y;
+
+
+        def move_cursor(self,x:int,y:int):
+            self.buffer.move(y,x);
+            self.curosr_x = x;
+            self.curosr_y = y;
+
+
+        def clear(self):
+            self.buffer.clear();
+            self.updata();
+
+        
+
+
+        def getch(self):
+            return chr(self.buffer.getch());
+
+
+        def getch_number(self):
+            return self.buffer.getch();
+
+    
+
+    def write(self,text:str,*color:int):
+        add_str_to_buffer(self.buffer,text,color);
+
+        
+    def write(self,text:str,x:int,y:int):
+        add_str_to_buffer(self.buffer,text,x,y);
     
     
 
@@ -713,15 +875,17 @@ elif system_name == SystemName.linux:
     #console_height = 25;
 
     stdscr = curses.initscr();
-    stdscr.keypad(True);
+    stdscr.keypad(True);#功能键
 
-    curses.start_color();#获取颜色curses.color_pair(Color.BLACK.value);
-    curses.curs_set(0);
-    curses.noecho();
-    curses.cbreak();
 
     #stdscr.resize(console_height,console_width);
-    console_height,console_width = stdscr.getmaxyx();
+    console_height, console_width = stdscr.getmaxyx();
+    console_cursor_y, console_cursor_x = stdscr.getyx();
+
+
+    def buffer_info_updata():
+        console_height, console_width = stdscr.getmaxyx();
+        console_cursor_y, console_cursor_x = stdscr.getyx();
 
 
     def get_width():
@@ -733,13 +897,11 @@ elif system_name == SystemName.linux:
 
 
     def get_max_width():
-        console_width = stdscr.getmaxyx()[1];
-        return get_width();
+        return console_width;
 
 
     def get_max_height():
-        console_height = stdscr.getmaxyx()[0];
-        return get_height();
+        return console_height;
 
 
     def get_cursor_x():
@@ -750,16 +912,10 @@ elif system_name == SystemName.linux:
         return stdscr.getyx()[0];
 
 
-    def pause():
-        curses.nocbreak();
-        stdscr.keypad(False);
-        curses.echo();
-        curses.endwin();
-
-
 
     def refresh():
         stdscr.refresh();
+        console_height, console_width = stdscr.getmaxyx();
 
 
 
